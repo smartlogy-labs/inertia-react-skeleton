@@ -29,6 +29,15 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/Components/ui/breadcrumb";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from "@/Components/ui/pagination";
 
 interface Task {
     id: number;
@@ -37,11 +46,28 @@ interface Task {
     completed: boolean;
 }
 
+interface Pagination {
+    current_page: number;
+    last_page: number;
+    next_page_url: string | null;
+    prev_page_url: string | null;
+    links: { url: string | null; label: string; active: boolean }[];
+}
+
+interface TasksResponse {
+    data: Task[];
+    links: Pagination["links"];
+    current_page: number;
+    last_page: number;
+    next_page_url: string | null;
+    prev_page_url: string | null;
+}
+
 export default function Index({
     tasks,
     filters,
 }: {
-    tasks: Task[];
+    tasks: TasksResponse;
     filters: { search?: string; status?: string };
 }) {
     const [search, setSearch] = useState(filters.search || "");
@@ -151,8 +177,8 @@ export default function Index({
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {tasks.length > 0 ? (
-                                    tasks.map((task, index) => (
+                                {tasks.data.length > 0 ? (
+                                    tasks.data.map((task, index) => (
                                         <TableRow key={task.id}>
                                             <TableCell className="p-6">
                                                 {index + 1}
@@ -200,6 +226,74 @@ export default function Index({
                                 )}
                             </TableBody>
                         </Table>
+
+                        <Pagination className="flex justify-center items-center py-4">
+                            <PaginationContent>
+                                {/* Tombol Previous */}
+                                <PaginationItem>
+                                    <PaginationPrevious
+                                        href={tasks.prev_page_url || "#"}
+                                        onClick={(e) => {
+                                            if (!tasks.prev_page_url) {
+                                                e.preventDefault();
+                                            } else {
+                                                router.get(
+                                                    tasks.prev_page_url,
+                                                    {},
+                                                    { preserveState: true }
+                                                );
+                                            }
+                                        }}
+                                    />
+                                </PaginationItem>
+
+                                {/* Tautan Halaman */}
+                                {tasks.links.map((link, index) => (
+                                    <PaginationItem key={index}>
+                                        <PaginationLink
+                                            href={link.url || "#"}
+                                            onClick={(e) => {
+                                                if (!link.url || link.active) {
+                                                    e.preventDefault();
+                                                } else {
+                                                    router.get(
+                                                        link.url,
+                                                        {},
+                                                        { preserveState: true }
+                                                    );
+                                                }
+                                            }}
+                                            isActive={link.active}
+                                        >
+                                            {link.label
+                                                .replace(
+                                                    "&laquo; Previous",
+                                                    "«"
+                                                )
+                                                .replace("Next &raquo;", "»")}
+                                        </PaginationLink>
+                                    </PaginationItem>
+                                ))}
+
+                                {/* Tombol Next */}
+                                <PaginationItem>
+                                    <PaginationNext
+                                        href={tasks.next_page_url || "#"}
+                                        onClick={(e) => {
+                                            if (!tasks.next_page_url) {
+                                                e.preventDefault();
+                                            } else {
+                                                router.get(
+                                                    tasks.next_page_url,
+                                                    {},
+                                                    { preserveState: true }
+                                                );
+                                            }
+                                        }}
+                                    />
+                                </PaginationItem>
+                            </PaginationContent>
+                        </Pagination>
                     </div>
                 </div>
             </>

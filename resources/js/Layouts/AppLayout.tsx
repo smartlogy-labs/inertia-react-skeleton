@@ -20,11 +20,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <SidebarProvider>
             <AppSidebar />
             <div className="flex-1 overflow-auto">
-                <header className="bg-white shadow">
+                <header className="bg-white ">
                     <div className="flex justify-between items-center mx-auto py-4 px-4 sm:px-6 lg:px-8">
                         <div className="flex items-center justify-between gap-4">
                             <SidebarTrigger />
-                            {/* <span className="text-gray-700">|</span> */}
                         </div>
                         <div className="sm:ms-6 sm:flex sm:items-center">
                             <div className="relative ms-3">
