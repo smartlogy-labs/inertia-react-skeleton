@@ -24,7 +24,8 @@ class TaskController extends Controller
             $query->where('completed', $status);
         }
 
-        $tasks = $query->get();
+        // Tambahkan pagination di sini
+        $tasks = $query->paginate(5); // 10 item per halaman
 
         return Inertia::render('Tasks/Index', [
             'tasks' => $tasks,

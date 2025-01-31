@@ -284,7 +284,7 @@ const SidebarTrigger = React.forwardRef<
             data-sidebar="trigger"
             variant="ghost"
             size="icon"
-            className={cn("h-12 w-12 block md:hidden", className)} // Pastikan ukuran tombol besar
+            className={cn("h-12 w-12 md:hidden", className)} // Pastikan ukuran tombol besar
             onClick={(event) => {
                 onClick?.(event);
                 toggleSidebar();
