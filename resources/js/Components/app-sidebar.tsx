@@ -1,5 +1,5 @@
 import { CheckSquare, LayoutDashboard, SquareTerminal } from "lucide-react";
-import { usePage } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 
 import {
     Sidebar,
@@ -19,12 +19,12 @@ const data = {
     mainMenu: [
         {
             title: "Dashboard",
-            url: "/dashboard",
+            route: "dashboard",
             icon: LayoutDashboard,
         },
         {
             title: "Tasks",
-            url: "/tasks",
+            route: "tasks.index",
             icon: CheckSquare,
         },
     ],
@@ -32,7 +32,7 @@ const data = {
     navMain: [
         {
             title: "Playground",
-            url: "#",
+            url: "/",
             icon: SquareTerminal,
             items: [
                 {
@@ -66,13 +66,13 @@ export function AppSidebar() {
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {data.mainMenu.map((item) => {
-                                const isActive = url.startsWith(item.url);
+                                const isActive = url.startsWith(item.route);
 
                                 return (
                                     <SidebarMenuItem key={item.title}>
                                         <SidebarMenuButton asChild>
-                                            <a
-                                                href={item.url}
+                                            <Link
+                                                href={route(item.route)}
                                                 className={`flex items-center space-x-2 px-4 py-2 rounded-md ${
                                                     isActive
                                                         ? "bg-sidebar-accent font-bold"
@@ -81,7 +81,7 @@ export function AppSidebar() {
                                             >
                                                 <item.icon />
                                                 <span>{item.title}</span>
-                                            </a>
+                                            </Link>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
                                 );

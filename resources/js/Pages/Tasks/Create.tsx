@@ -41,7 +41,7 @@ export default function Create() {
                         Menampilkan list pekerjaan
                     </h2>
                 </div>
-                <Link href="/tasks">
+                <Link href={route("tasks.index")}>
                     <Button className="p-4">← Kembali</Button>
                 </Link>
             </div>
