@@ -105,7 +105,7 @@ export default function Index({
                             Menampilkan list tugas anda
                         </h2>
                     </div>
-                    <Link href="/tasks/create">
+                    <Link href={route("tasks.create")}>
                         <Button className="p-6">Create Task + </Button>
                     </Link>
                 </div>

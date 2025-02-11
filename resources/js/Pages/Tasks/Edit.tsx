@@ -1,9 +1,9 @@
 import React from "react";
 import { Link, useForm } from "@inertiajs/react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Components/ui/button";
 import { Textarea } from "@/Components/ui/textarea";
 import { Label } from "@/Components/ui/label";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/Components/ui/input";
 import { Checkbox } from "@/Components/ui/checkbox";
 import AppLayout from "@/Layouts/AppLayout";
 import { toast } from "@/hooks/use-toast";
@@ -49,7 +49,7 @@ export default function Edit({ task }: { task: Task }) {
                         Menampilkan list pekerjaan
                     </h2>
                 </div>
-                <Link href="/tasks">
+                <Link href={route("tasks.index")}>
                     <Button className="p-6">← Kembali</Button>
                 </Link>
             </div>
