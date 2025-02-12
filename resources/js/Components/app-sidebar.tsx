@@ -66,7 +66,13 @@ export function AppSidebar() {
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {data.mainMenu.map((item) => {
-                                const isActive = url.startsWith(item.route);
+                                const itemPath = new URL(
+                                    route(item.route),
+                                    window.location.origin
+                                ).pathname;
+                                const isActive =
+                                    url === itemPath ||
+                                    url.startsWith(itemPath);
 
                                 return (
                                     <SidebarMenuItem key={item.title}>
