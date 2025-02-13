@@ -30,8 +30,8 @@ export default function Create() {
             second: "numeric", // Detik (e.g., "30")
             hour12: false, // Format 24 jam
         });
-    };
-
+    }; 
+    
     return (
         <AppLayout>
             <div className="p-2 m-2 flex justify-between">
@@ -87,13 +87,6 @@ export default function Create() {
                                     type="submit"
                                     disabled={processing}
                                     className="rounded-xl h-[50px] w-[150px]"
-                                    onClick={() => {
-                                        toast({
-                                            title: "Created Task Successfully",
-                                            description: getCurrentDateTime(),
-                                            variant: "success",
-                                        });
-                                    }}
                                 >
                                     Save
                                 </Button>

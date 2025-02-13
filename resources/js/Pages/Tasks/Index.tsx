@@ -19,16 +19,7 @@ import {
 } from "@/Components/ui/select";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
-import { toast } from "@/hooks/use-toast";
-import { Edit, Trash } from "lucide-react";
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-} from "@/Components/ui/breadcrumb";
+import { Edit, Trash } from "lucide-react"; 
 import {
     Pagination,
     PaginationContent,
@@ -38,25 +29,16 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from "@/Components/ui/pagination";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/Components/ui/card";
+import { PaginationResponse } from "@/types/response";
+import { TaskList } from "./Types/task";
+import PaginationV2 from "@/Components/AutoPagination";
+import CustomPagination from "@/Components/AutoPagination";
 
-interface Task {
-    id: number;
-    title: string;
-    description: string;
-    completed: boolean;
-}
-
-interface Pagination {
-    current_page: number;
-    last_page: number;
-    next_page_url: string | null;
-    prev_page_url: string | null;
-    links: { url: string | null; label: string; active: boolean }[];
-}
 
 interface TasksResponse {
-    data: Task[];
-    links: Pagination["links"];
+    data: TaskList[];
+    links: PaginationResponse["links"];
     current_page: number;
     last_page: number;
     next_page_url: string | null;
@@ -68,7 +50,10 @@ export default function Index({
     filters,
 }: {
     tasks: TasksResponse;
-    filters: { search?: string; status?: string };
+    filters: { 
+        search?: string; 
+        status?: string 
+    };
 }) {
     const [search, setSearch] = useState(filters.search || "");
     const [status, setStatus] = useState(filters.status || "");
@@ -86,12 +71,9 @@ export default function Index({
     const deleteTask = (id: number) => {
         if (confirm("Are you sure?")) {
             router.delete(`/tasks/${id}`);
-            toast({
-                title: "Delete Task Successfully",
-                variant: "destructive",
-            });
         }
     };
+
 
     return (
         <AppLayout>
@@ -109,18 +91,16 @@ export default function Index({
                         <Button className="p-6">Create Task + </Button>
                     </Link>
                 </div>
-                <div className="border border-gray-200 bg-white overflow-hidden shadow-sm sm:rounded-xl">
-                    <div className="py-4">
-                        <div className="flex justify-between items-center mb-8 mx-4 border border-primary shadow-md rounded-xl">
-                            <div className="space-x-2 m-4">
-                                <h1 className="text-gray-500 m-4">
-                                    Pencarian Data
-                                </h1>
+
+                <Card>
+                    <CardHeader className="p-3">
+                        <Card>
+                            <CardContent className="p-3">
                                 <div className="flex flex-col gap-4 mb-4 md:flex-col lg:flex-row">
                                     <Input
                                         type="text"
                                         placeholder="Mulai Pencarian..."
-                                        className="h-[50px] rounded-xl w-full lg:w-[350px]"
+                                        className="h-auto rounded-xl w-full lg:w-auto"
                                         value={search}
                                         onChange={(e) =>
                                             setSearch(e.target.value)
@@ -130,13 +110,13 @@ export default function Index({
                                         value={status}
                                         onValueChange={setStatus}
                                     >
-                                        <SelectTrigger className="w-full h-[50px] rounded-xl lg:w-[300px]">
+                                        <SelectTrigger className="w-full h-auto rounded-xl lg:w-auto">
                                             <SelectValue placeholder="Filter" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectGroup>
                                                 <SelectItem value="all">
-                                                    Semua
+                                                    Semua Status
                                                 </SelectItem>
                                                 <SelectItem value="pending">
                                                     Pending
@@ -150,26 +130,29 @@ export default function Index({
                                 </div>
 
                                 <Button
-                                    className="rounded-xl h-[45px] w-[150px] mb-4"
+                                    size="sm"
                                     type="button"
                                     onClick={handleSearch}
+                                    className="me-2"
                                 >
                                     Search
                                 </Button>
                                 <Button
+                                    size="sm"
                                     variant="destructive_outlined"
-                                    className="rounded-xl h-[45px] w-[150px]"
                                     type="button"
                                     onClick={resetFilters}
                                 >
                                     Reset
                                 </Button>
-                            </div>
-                        </div>
+                            </CardContent>
+                        </Card>
+                    </CardHeader>
+                    <CardContent>
                         <Table>
                             <TableHeader>
-                                <TableRow>
-                                    <TableHead className="p-6">#</TableHead>
+                                <TableRow className="fw-bolder">
+                                    <TableHead>#</TableHead>
                                     <TableHead>Title</TableHead>
                                     <TableHead>Description</TableHead>
                                     <TableHead>Status</TableHead>
@@ -226,76 +209,12 @@ export default function Index({
                                 )}
                             </TableBody>
                         </Table>
+ 
 
-                        <Pagination className="flex justify-center items-center py-4">
-                            <PaginationContent>
-                                {/* Tombol Previous */}
-                                <PaginationItem>
-                                    <PaginationPrevious
-                                        href={tasks.prev_page_url || "#"}
-                                        onClick={(e) => {
-                                            if (!tasks.prev_page_url) {
-                                                e.preventDefault();
-                                            } else {
-                                                router.get(
-                                                    tasks.prev_page_url,
-                                                    {},
-                                                    { preserveState: true }
-                                                );
-                                            }
-                                        }}
-                                    />
-                                </PaginationItem>
-
-                                {/* Tautan Halaman */}
-                                {tasks.links.map((link, index) => (
-                                    <PaginationItem key={index}>
-                                        <PaginationLink
-                                            href={link.url || "#"}
-                                            onClick={(e) => {
-                                                if (!link.url || link.active) {
-                                                    e.preventDefault();
-                                                } else {
-                                                    router.get(
-                                                        link.url,
-                                                        {},
-                                                        { preserveState: true }
-                                                    );
-                                                }
-                                            }}
-                                            isActive={link.active}
-                                        >
-                                            {link.label
-                                                .replace(
-                                                    "&laquo; Previous",
-                                                    "«"
-                                                )
-                                                .replace("Next &raquo;", "»")}
-                                        </PaginationLink>
-                                    </PaginationItem>
-                                ))}
-
-                                {/* Tombol Next */}
-                                <PaginationItem>
-                                    <PaginationNext
-                                        href={tasks.next_page_url || "#"}
-                                        onClick={(e) => {
-                                            if (!tasks.next_page_url) {
-                                                e.preventDefault();
-                                            } else {
-                                                router.get(
-                                                    tasks.next_page_url,
-                                                    {},
-                                                    { preserveState: true }
-                                                );
-                                            }
-                                        }}
-                                    />
-                                </PaginationItem>
-                            </PaginationContent>
-                        </Pagination>
-                    </div>
-                </div>
+                        
+                        <CustomPagination links={tasks.links} />
+                    </CardContent>
+                </Card>
             </>
         </AppLayout>
     );

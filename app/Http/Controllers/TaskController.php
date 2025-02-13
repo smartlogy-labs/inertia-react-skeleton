@@ -25,11 +25,12 @@ class TaskController extends Controller
         }
 
         // Tambahkan pagination di sini
-        $tasks = $query->paginate(5); // 10 item per halaman
+        $tasks = $query->paginate(2); // 10 item per halaman
 
         return Inertia::render('Tasks/Index', [
             'tasks' => $tasks,
             'filters' => $request->only(['search', 'status']),
+            "uwu" => "siplah"
         ]);
     }
 
@@ -47,7 +48,10 @@ class TaskController extends Controller
 
         Task::create($validated);
 
-        return redirect()->route('tasks.index');
+        return redirect()->route('tasks.index')->with([
+            'message' => 'Task berhasil dibuat!',
+            'type' => 'success'  
+        ]);
     }
 
     public function edit(Task $task)

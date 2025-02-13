@@ -12,12 +12,16 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/Components/ui/breadcrumb";
+import Alert from "@/Components/AlertNotifMessage";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
     const user = usePage().props.auth.user;
 
     return (
         <SidebarProvider>
+
+            <Toaster /> 
+            <Alert />
             <AppSidebar />
             <div className="flex-1 overflow-auto">
                 <header className="bg-white ">
@@ -72,7 +76,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                     </div>
                 </header>
                 <main className="p-4">{children}</main>
-                <Toaster />
+                {/* <Toaster /> */}
+
             </div>
         </SidebarProvider>
     );

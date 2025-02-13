@@ -111,13 +111,6 @@ export default function Edit({ task }: { task: Task }) {
                                     type="submit"
                                     disabled={processing}
                                     className="rounded-xl h-[50px] w-[150px]"
-                                    onClick={() => {
-                                        toast({
-                                            title: "Update Task Successfully",
-                                            description: getCurrentDateTime(),
-                                            variant: "secondary",
-                                        });
-                                    }}
                                 >
                                     Update Task
                                 </Button>
