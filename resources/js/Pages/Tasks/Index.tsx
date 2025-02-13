@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, router } from "@inertiajs/react";
+import { Deferred, Link, router, usePage } from "@inertiajs/react";
 import AppLayout from "@/Layouts/AppLayout";
 import {
     Table,
@@ -19,7 +19,7 @@ import {
 } from "@/Components/ui/select";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
-import { Edit, Trash } from "lucide-react"; 
+import { Edit, Trash } from "lucide-react";
 import {
     Pagination,
     PaginationContent,
@@ -34,6 +34,7 @@ import { PaginationResponse } from "@/types/response";
 import { TaskList } from "./Types/task";
 import PaginationV2 from "@/Components/AutoPagination";
 import CustomPagination from "@/Components/AutoPagination";
+import TaskTable from "./TaskTable";
 
 
 interface TasksResponse {
@@ -50,31 +51,23 @@ export default function Index({
     filters,
 }: {
     tasks: TasksResponse;
-    filters: { 
-        search?: string; 
-        status?: string 
+    filters: {
+        search?: string;
+        status?: string
     };
 }) {
     const [search, setSearch] = useState(filters.search || "");
     const [status, setStatus] = useState(filters.status || "");
 
     const handleSearch = () => {
-        router.get("/tasks", { search, status }, { preserveState: true });
+        router.get("/tasks", { search, status }, { preserveState: true, only: ['tasks'] });
     };
 
     const resetFilters = () => {
         setSearch("");
         setStatus("");
-        router.get("/tasks", {}, { preserveState: true });
+        router.get("/tasks", {}, { preserveState: true, only: ['tasks'] });
     };
-
-    const deleteTask = (id: number) => {
-        if (confirm("Are you sure?")) {
-            router.delete(`/tasks/${id}`);
-        }
-    };
-
-
     return (
         <AppLayout>
             <>
@@ -94,7 +87,7 @@ export default function Index({
 
                 <Card>
                     <CardHeader className="p-3">
-                        <Card>
+                        <Card className="mb-3">
                             <CardContent className="p-3">
                                 <div className="flex flex-col gap-4 mb-4 md:flex-col lg:flex-row">
                                     <Input
@@ -148,72 +141,10 @@ export default function Index({
                             </CardContent>
                         </Card>
                     </CardHeader>
-                    <CardContent>
-                        <Table>
-                            <TableHeader>
-                                <TableRow className="fw-bolder">
-                                    <TableHead>#</TableHead>
-                                    <TableHead>Title</TableHead>
-                                    <TableHead>Description</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead>Actions</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {tasks.data.length > 0 ? (
-                                    tasks.data.map((task, index) => (
-                                        <TableRow key={task.id}>
-                                            <TableCell className="p-6">
-                                                {index + 1}
-                                            </TableCell>
-                                            <TableCell>{task.title}</TableCell>
-                                            <TableCell>
-                                                {task.description}
-                                            </TableCell>
-                                            <TableCell>
-                                                {task.completed
-                                                    ? "Completed ✅"
-                                                    : "Pending ❌"}
-                                            </TableCell>
-                                            <TableCell>
-                                                <Link
-                                                    href={`/tasks/${task.id}/edit`}
-                                                >
-                                                    <Button
-                                                        variant="outline"
-                                                        className="mr-2 mb-2"
-                                                    >
-                                                        <Edit />
-                                                    </Button>
-                                                </Link>
-                                                <Button
-                                                    variant="destructive"
-                                                    onClick={() =>
-                                                        deleteTask(task.id)
-                                                    }
-                                                >
-                                                    <Trash />
-                                                </Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                ) : (
-                                    <TableRow>
-                                        <TableCell
-                                            colSpan={5}
-                                            className="text-2xl text-center p-6 text-gray-500"
-                                        >
-                                            Data tidak ditemukan 😢
-                                        </TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
- 
 
-                        
-                        <CustomPagination links={tasks.links} />
-                    </CardContent>
+                    <Deferred data="tasks" fallback={<div>Loading...</div>}>
+                        <TaskTable></TaskTable>
+                    </Deferred>
                 </Card>
             </>
         </AppLayout>

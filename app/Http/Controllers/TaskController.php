@@ -24,11 +24,10 @@ class TaskController extends Controller
             $query->where('completed', $status);
         }
 
-        // Tambahkan pagination di sini
-        $tasks = $query->paginate(2); // 10 item per halaman
+        $tasks = $query->paginate(10);
 
         return Inertia::render('Tasks/Index', [
-            'tasks' => $tasks,
+            'tasks' => Inertia::defer(fn () => $tasks),
             'filters' => $request->only(['search', 'status']),
             "uwu" => "siplah"
         ]);

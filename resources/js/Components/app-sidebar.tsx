@@ -62,7 +62,7 @@ export function AppSidebar() {
             </SidebarHeader>
             <SidebarContent>
                 <SidebarGroup>
-                    <SidebarGroupLabel>Main Menu</SidebarGroupLabel>
+                    <SidebarGroupLabel>MAIN MENU</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {data.mainMenu.map((item) => {
@@ -84,6 +84,7 @@ export function AppSidebar() {
                                                         ? "bg-sidebar-accent font-bold"
                                                         : "text-gray-700 hover:bg-gray-200"
                                                 }`}
+                                                prefetch
                                             >
                                                 <item.icon />
                                                 <span>{item.title}</span>
