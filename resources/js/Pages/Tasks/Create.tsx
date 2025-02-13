@@ -17,20 +17,6 @@ export default function Create() {
         e.preventDefault();
         post("/tasks");
     };
-
-    const getCurrentDateTime = () => {
-        const now = new Date();
-        return now.toLocaleString("id-ID", {
-            weekday: "long", // Nama hari (e.g., "Jumat")
-            year: "numeric", // Tahun (e.g., "2023")
-            month: "long", // Nama bulan (e.g., "Februari")
-            day: "numeric", // Tanggal (e.g., "10")
-            hour: "numeric", // Jam (e.g., "17")
-            minute: "numeric", // Menit (e.g., "57")
-            second: "numeric", // Detik (e.g., "30")
-            hour12: false, // Format 24 jam
-        });
-    }; 
     
     return (
         <AppLayout>

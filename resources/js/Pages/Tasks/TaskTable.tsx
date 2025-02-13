@@ -4,7 +4,7 @@ import { CardContent } from '@/Components/ui/card';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/Components/ui/table';
 import { PaginationResponse } from '@/types/response';
 import { Link, router, usePage } from '@inertiajs/react';
-import { Trash } from 'lucide-react';
+import { Edit, Trash } from 'lucide-react';
 
 interface Task {
     id: number;
@@ -28,7 +28,7 @@ export default function TaskTable() {
 
     const deleteTask = (id: number) => {
         if (confirm("Are you sure?")) {
-            router.delete(`/tasks/${id}`);
+            router.delete(`/tasks/${id}`, { preserveState: true, only: ['tasks'] });
         }
     };
 
@@ -64,12 +64,12 @@ export default function TaskTable() {
                                     <Link
                                         href={`/tasks/${task.id}/edit`}
                                     >
-                                        {/* <Button
+                                        <Button
                                             variant="outline"
                                             className="mr-2 mb-2"
                                         >
                                             <Edit />
-                                        </Button> */}
+                                        </Button>
                                     </Link>
                                     <Button
                                         onClick={() =>

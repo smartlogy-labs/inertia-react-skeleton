@@ -76,9 +76,6 @@ export default function Index({
                         <h2 className="text-2xl font-semibold">
                             TodoList Task
                         </h2>
-                        <h2 className="text-1xl font-normal text-gray-600">
-                            Menampilkan list tugas anda
-                        </h2>
                     </div>
                     <Link href={route("tasks.create")}>
                         <Button className="p-6">Create Task + </Button>
@@ -143,7 +140,7 @@ export default function Index({
                     </CardHeader>
 
                     <Deferred data="tasks" fallback={<div>Loading...</div>}>
-                        <TaskTable></TaskTable>
+                        <TaskTable/>
                     </Deferred>
                 </Card>
             </>
