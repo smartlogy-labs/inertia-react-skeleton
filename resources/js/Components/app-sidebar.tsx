@@ -4,6 +4,7 @@ import { Link, usePage } from "@inertiajs/react";
 import {
     Sidebar,
     SidebarContent,
+    SidebarFooter,
     SidebarGroup,
     SidebarGroupContent,
     SidebarGroupLabel,
@@ -14,6 +15,7 @@ import {
 } from "@/Components/ui/sidebar";
 
 import { NavMain } from "@/Components/Nav-main";
+import { NavUser } from "./nav-user";
 
 const data = {
     mainMenu: [
@@ -25,6 +27,11 @@ const data = {
         {
             title: "Tasks",
             route: "tasks.index",
+            icon: CheckSquare,
+        },
+        {
+            title: "Task Categories",
+            route: "task-category.index",
             icon: CheckSquare,
         },
     ],
@@ -54,6 +61,7 @@ const data = {
 
 export function AppSidebar() {
     const { url } = usePage();
+    const user = usePage().props.auth.user;
 
     return (
         <Sidebar collapsible="icon" variant="floating">
@@ -99,6 +107,14 @@ export function AppSidebar() {
                     </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
+            <SidebarFooter>
+                <NavUser
+                    user={{
+                        name: user.name,
+                        email: user.email|| "",
+                    }}
+                />
+            </SidebarFooter>
         </Sidebar>
     );
 }
