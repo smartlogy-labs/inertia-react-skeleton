@@ -4,7 +4,6 @@ import { Link, usePage } from "@inertiajs/react";
 import {
     Sidebar,
     SidebarContent,
-    SidebarFooter,
     SidebarGroup,
     SidebarGroupContent,
     SidebarGroupLabel,
@@ -15,23 +14,17 @@ import {
 } from "@/Components/ui/sidebar";
 
 import { NavMain } from "@/Components/Nav-main";
-import { NavUser } from "./nav-user";
 
 const data = {
     mainMenu: [
         {
             title: "Dashboard",
-            route: "dashboard",
+            route: "/dashboard",
             icon: LayoutDashboard,
         },
         {
             title: "Tasks",
             route: "/tasks",
-            icon: CheckSquare,
-        },
-        {
-            title: "Task Categories",
-            route: "/task-category",
             icon: CheckSquare,
         },
     ],
@@ -61,7 +54,6 @@ const data = {
 
 export function AppSidebar() {
     const { url } = usePage();
-    const user = usePage().props.auth.user;
 
     return (
         <Sidebar collapsible="icon" variant="floating">
@@ -87,8 +79,8 @@ export function AppSidebar() {
                                             <Link
                                                 href={item.route} // Langsung pakai item.route
                                                 className={`flex items-center space-x-2 px-4 py-2 rounded-md ${isActive
-                                                    ? "bg-sidebar-accent font-bold"
-                                                    : "text-gray-700 hover:bg-gray-200"
+                                                        ? "bg-sidebar-accent font-bold"
+                                                        : "text-gray-700 hover:bg-gray-200"
                                                     }`}
                                                 prefetch
                                             >
@@ -101,19 +93,11 @@ export function AppSidebar() {
                             })}
                         </SidebarMenu>
 
-                        <SidebarGroupLabel>MAIN MENU</SidebarGroupLabel>
+                        <SidebarGroupLabel>Platform</SidebarGroupLabel>
                         <NavMain items={data.navMain} />
                     </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
-            <SidebarFooter>
-                <NavUser
-                    user={{
-                        name: user.name,
-                        email: user.email || "",
-                    }}
-                />
-            </SidebarFooter>
         </Sidebar>
     );
 }

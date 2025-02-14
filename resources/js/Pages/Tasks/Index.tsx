@@ -77,7 +77,7 @@ export default function Index({
                             TodoList Task
                         </h2>
                     </div>
-                    <Link href={route("tasks.create")}>
+                    <Link href="tasks/create">
                         <Button className="p-6">Create Task + </Button>
                     </Link>
                 </div>
@@ -89,7 +89,7 @@ export default function Index({
                                 <div className="flex flex-col gap-4 mb-4 md:flex-col lg:flex-row">
                                     <Input
                                         type="text"
-                                        placeholder="Mulai Pencarian..."
+                                        placeholder="Kata Kunci Nama"
                                         className="h-auto rounded-xl w-full lg:w-auto"
                                         value={search}
                                         onChange={(e) =>

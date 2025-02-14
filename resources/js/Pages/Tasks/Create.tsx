@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { Link, useForm } from "@inertiajs/react";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Textarea } from "@/Components/ui/textarea";
 import { Label } from "@/Components/ui/label";
 import AppLayout from "@/Layouts/AppLayout";
-import { toast } from "@/hooks/use-toast";
 
 export default function Create() {
     const { data, setData, post, processing, errors } = useForm({
@@ -17,7 +16,7 @@ export default function Create() {
         e.preventDefault();
         post("/tasks");
     };
-    
+
     return (
         <AppLayout>
             <div className="p-2 m-2 flex justify-between">
@@ -27,7 +26,7 @@ export default function Create() {
                         Menampilkan list pekerjaan
                     </h2>
                 </div>
-                <Link href={route("tasks.index")}>
+                <Link replace href="/tasks">
                     <Button className="p-4">← Kembali</Button>
                 </Link>
             </div>

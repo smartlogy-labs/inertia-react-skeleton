@@ -27,19 +27,6 @@ export default function Edit({ task }: { task: Task }) {
         put(`/tasks/${task.id}`);
     };
 
-    const getCurrentDateTime = () => {
-        const now = new Date();
-        return now.toLocaleString("id-ID", {
-            weekday: "long", // Nama hari (e.g., "Jumat")
-            year: "numeric", // Tahun (e.g., "2023")
-            month: "long", // Nama bulan (e.g., "Februari")
-            day: "numeric", // Tanggal (e.g., "10")
-            hour: "numeric", // Jam (e.g., "17")
-            minute: "numeric", // Menit (e.g., "57")
-            second: "numeric", // Detik (e.g., "30")
-            hour12: false, // Format 24 jam
-        });
-    };
     return (
         <AppLayout>
             <div className="p-2 m-2 flex justify-between">
@@ -49,8 +36,8 @@ export default function Edit({ task }: { task: Task }) {
                         Menampilkan list pekerjaan
                     </h2>
                 </div>
-                <Link href={route("tasks.index")}>
-                    <Button className="p-6">← Kembali</Button>
+                <Link replace href="/tasks">
+                    <Button className="p-4">← Kembali</Button>
                 </Link>
             </div>
             <div className="grid lg:grid-cols-2 md:grid-cols-2 gap-4">
