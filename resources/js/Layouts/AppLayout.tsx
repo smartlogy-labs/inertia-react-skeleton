@@ -18,7 +18,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     const user = usePage().props.auth.user;
 
     return (
-        <SidebarProvider>
+        <SidebarProvider className="font-nunito"
+            style={{ "--sidebar-width": "14rem" } as React.CSSProperties}
+        >
             <Toaster />
             <Alert />
             <AppSidebar />
@@ -34,7 +36,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                     </div>
                 </header>
                 {/* <main className="p-4 mt-20 md:mt-0">{children}</main> */}
-                <main className="p-4">{children}</main>
+                <main className="p-6 bg-slate-100 rounded-2xl m-2 min-h-screen font-nunito">
+                    {children}
+                </main>
+
                 {/* <Toaster /> */}
 
             </div>

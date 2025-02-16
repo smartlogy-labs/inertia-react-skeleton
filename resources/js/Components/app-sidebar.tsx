@@ -64,11 +64,11 @@ export function AppSidebar() {
     const user = usePage().props.auth.user;
 
     return (
-        <Sidebar collapsible="icon" variant="floating">
+        <Sidebar collapsible="icon" variant="sidebar">
             <SidebarHeader>
                 <h1 className="text-xl font-semibold p-4">Smartlogy Project</h1>
             </SidebarHeader>
-            <SidebarContent>
+            <SidebarContent >
                 <SidebarGroup>
                     <SidebarGroupLabel>MAIN MENU</SidebarGroupLabel>
                     <SidebarGroupContent>

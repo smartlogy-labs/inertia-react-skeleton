@@ -1,4 +1,5 @@
 import CustomPagination from '@/Components/AutoPagination';
+import { CustomButton } from '@/Components/Custom/Button';
 import { Button } from '@/Components/ui/button';
 import { CardContent } from '@/Components/ui/card';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/Components/ui/table';
@@ -61,23 +62,25 @@ export default function TaskTable() {
                                         : "Pending ❌"}
                                 </TableCell>
                                 <TableCell>
-                                    <Link
+                                    <Link className='me-1'
                                         href={`/tasks/${task.id}/edit`}
                                     >
-                                        <Button
-                                            variant="outline"
-                                            className="mr-2 mb-2"
+                                        <CustomButton
+                                            size='sm'
+                                            variant="warningOutline"
                                         >
                                             <Edit />
-                                        </Button>
+                                        </CustomButton>
                                     </Link>
-                                    <Button
+                                    <CustomButton
+                                        size='sm'
+                                        variant="danger"
                                         onClick={() =>
                                             deleteTask(task.id)
                                         }
                                     >
                                         <Trash />
-                                    </Button>
+                                    </CustomButton>
                                 </TableCell>
                             </TableRow>
                         ))

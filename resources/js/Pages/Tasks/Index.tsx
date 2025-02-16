@@ -35,6 +35,7 @@ import { TaskList } from "./Types/task";
 import PaginationV2 from "@/Components/AutoPagination";
 import CustomPagination from "@/Components/AutoPagination";
 import TaskTable from "./TaskTable";
+import { CustomButton } from "@/Components/Custom/Button";
 
 
 interface TasksResponse {
@@ -71,14 +72,14 @@ export default function Index({
     return (
         <AppLayout>
             <>
-                <div className="p-2 m-2 flex flex-col md:flex-row justify-center md:justify-between items-center">
+                <div className="pb-2 mb-4 flex flex-col md:flex-row justify-center md:justify-between items-center">
                     <div className="header mb-4 md:mb-0 text-center md:text-left">
-                        <h2 className="text-2xl font-semibold">
+                        <h2 className="text-2xl font-extrabold font-nunito">
                             TodoList Task
                         </h2>
                     </div>
                     <Link href="tasks/create">
-                        <Button className="p-6">Create Task + </Button>
+                        <CustomButton variant="default" size="default">Create Task + </CustomButton>
                     </Link>
                 </div>
 
@@ -119,28 +120,29 @@ export default function Index({
                                     </Select>
                                 </div>
 
-                                <Button
+                                <CustomButton
                                     size="sm"
-                                    type="button"
+                                    variant="default"
                                     onClick={handleSearch}
-                                    className="me-2"
+                                    className="me-1"
                                 >
                                     Search
-                                </Button>
-                                <Button
+                                </CustomButton>
+
+                                <CustomButton
                                     size="sm"
-                                    variant="destructive_outlined"
-                                    type="button"
+                                    variant="warningOutline"
                                     onClick={resetFilters}
+                                    className="me-2"
                                 >
                                     Reset
-                                </Button>
+                                </CustomButton>
                             </CardContent>
                         </Card>
                     </CardHeader>
 
                     <Deferred data="tasks" fallback={<div>Loading...</div>}>
-                        <TaskTable/>
+                        <TaskTable />
                     </Deferred>
                 </Card>
             </>
