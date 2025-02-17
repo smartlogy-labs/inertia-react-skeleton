@@ -9,10 +9,15 @@ import { CustomButton } from "@/Components/Custom/Button";
 import { Card, CardContent } from "@/Components/ui/card";
 import { ArrowLeft } from "lucide-react";
 
-export default function Create() {
+interface CreateProps {
+    csrf_token: string;
+}
+
+export default function Create({ csrf_token }: CreateProps) {
     const { data, setData, post, processing, errors } = useForm({
         title: "",
         description: "",
+        _token: csrf_token, // Menyertakan CSRF token dalam data form
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -30,8 +35,10 @@ export default function Create() {
                         </CustomButton>
                     </Link>
                     <div>
-                        <p className="text-sm font-light text-slate-500">TodoList Task</p>
-                        <h2 className="text-lg font-bold">
+                        <p className="text-sm font-light text-slate-500">
+                            TodoList Task
+                        </p>
+                        <h2 className="text-2xl font-extrabold">
                             Tambah Data
                         </h2>
                     </div>
@@ -39,9 +46,10 @@ export default function Create() {
             </div>
             <div className="flex flex-wrap -mx-2">
                 <div className="w-full md:w-1/2 px-1">
-                    <Card className="border-none rounded-2xl shadow-md">
-                        <CardContent className="p-4">
+                    <Card className="border-none rounded-2xl shadow-sm">
+                        <CardContent>
                             <form onSubmit={handleSubmit} className="p-4 md:p-0">
+                                <input type="hidden" name="_token" value={csrf_token} /> {/* Menyertakan CSRF token sebagai input tersembunyi */}
                                 <div className="mb-4">
                                     <Label htmlFor="title" className="mb-2 block">Title</Label>
                                     <Input
@@ -76,14 +84,6 @@ export default function Create() {
                                     )}
                                 </div>
                                 <div className="flex justify-end">
-                                    {/* <Button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="rounded-xl h-[50px] w-[150px] bg-blue-600"
-                                    >
-                                        Save
-                                    </Button> */}
-
                                     <CustomButton
                                         variant="default"
                                         type="submit"
@@ -98,8 +98,6 @@ export default function Create() {
                     </Card>
                 </div>
             </div>
-
-
         </AppLayout>
     );
 }

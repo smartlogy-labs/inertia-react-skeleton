@@ -1,14 +1,6 @@
-import React, { useState } from "react";
-import { Deferred, Link, router, usePage } from "@inertiajs/react";
+import { useState } from "react";
+import { Deferred, Link, router } from "@inertiajs/react";
 import AppLayout from "@/Layouts/AppLayout";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/Components/ui/table";
 import {
     Select,
     SelectContent,
@@ -17,26 +9,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select";
-import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
-import { Edit, Trash } from "lucide-react";
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from "@/Components/ui/pagination";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/Components/ui/card";
+import { Card, CardContent, CardHeader } from "@/Components/ui/card";
 import { PaginationResponse } from "@/types/response";
 import { TaskList } from "./Types/task";
-import PaginationV2 from "@/Components/AutoPagination";
-import CustomPagination from "@/Components/AutoPagination";
 import TaskTable from "./TaskTable";
 import { CustomButton } from "@/Components/Custom/Button";
-
+import { Search } from "lucide-react";
 
 interface TasksResponse {
     data: TaskList[];
@@ -53,22 +32,35 @@ export default function Index({
 }: {
     tasks: TasksResponse;
     filters: {
-        search?: string;
+        keywordTitle?: string;
         status?: string
     };
 }) {
-    const [search, setSearch] = useState(filters.search || "");
+    const [keywordTitle, setKeywordTitle] = useState(filters.keywordTitle || "");
     const [status, setStatus] = useState(filters.status || "");
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSearch = () => {
-        router.get("/tasks", { search, status }, { preserveState: true, only: ['tasks'] });
+        setIsLoading(true);
+        router.get(
+            "/tasks",
+            { keywordTitle, status },
+            {
+                preserveState: true,
+                only: ['tasks'],
+                onFinish: () => setIsLoading(false), // Correctly placed inside the options object
+            }
+        );
     };
 
     const resetFilters = () => {
-        setSearch("");
+        setKeywordTitle("");
         setStatus("");
         router.get("/tasks", {}, { preserveState: true, only: ['tasks'] });
     };
+
+    const shouldShowResetButton = keywordTitle || status;
+
     return (
         <AppLayout>
             <>
@@ -78,30 +70,30 @@ export default function Index({
                             TodoList Task
                         </h2>
                     </div>
-                    <Link href="tasks/create">
+                    <Link href="tasks/create" prefetch>
                         <CustomButton variant="default" size="default">Create Task + </CustomButton>
                     </Link>
                 </div>
 
                 <Card>
                     <CardHeader className="p-3">
-                        <Card className="mb-3">
+                        <Card className="mb-0">
                             <CardContent className="p-3">
-                                <div className="flex flex-col gap-4 mb-4 md:flex-col lg:flex-row">
+                                <div className="flex flex-col gap-3 mb-4 md:flex-col lg:flex-row">
                                     <Input
                                         type="text"
                                         placeholder="Kata Kunci Nama"
-                                        className="h-auto rounded-xl w-full lg:w-auto"
-                                        value={search}
+                                        className="h-auto w-full lg:w-auto"
+                                        value={keywordTitle}
                                         onChange={(e) =>
-                                            setSearch(e.target.value)
+                                            setKeywordTitle(e.target.value)
                                         }
                                     />
                                     <Select
                                         value={status}
                                         onValueChange={setStatus}
                                     >
-                                        <SelectTrigger className="w-full h-auto rounded-xl lg:w-auto">
+                                        <SelectTrigger className="w-full h-auto lg:w-auto">
                                             <SelectValue placeholder="Filter" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -119,24 +111,29 @@ export default function Index({
                                         </SelectContent>
                                     </Select>
                                 </div>
-
+                                <div className="flex items-center gap-2">
                                 <CustomButton
                                     size="sm"
                                     variant="default"
                                     onClick={handleSearch}
-                                    className="me-1"
+                                    // className="me-1"
+                                    className="flex items-center gap-1"
+                                    disabled={isLoading}
                                 >
-                                    Search
+                                    <Search />
+                                    {isLoading ? "Searching..." : "Search"}
                                 </CustomButton>
 
-                                <CustomButton
-                                    size="sm"
-                                    variant="warningOutline"
-                                    onClick={resetFilters}
-                                    className="me-2"
-                                >
-                                    Reset
-                                </CustomButton>
+                                {shouldShowResetButton && (
+                                    <CustomButton
+                                        size="sm"
+                                        variant="warningOutline"
+                                        onClick={resetFilters}
+                                    >
+                                        Reset
+                                    </CustomButton>
+                                )}
+                                </div>
                             </CardContent>
                         </Card>
                     </CardHeader>

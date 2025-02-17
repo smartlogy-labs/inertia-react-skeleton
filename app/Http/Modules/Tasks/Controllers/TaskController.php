@@ -5,8 +5,10 @@ namespace App\Http\Modules\Tasks\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Modules\Tasks\Usecases\TaskUsecase;
 use App\Models\Task;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class TaskController extends Controller
 {
@@ -16,7 +18,7 @@ class TaskController extends Controller
         $this->usecase = $usecase;
     } 
 
-    public function index(Request $request)
+    public function index(Request $request) : Response
     {
         $data = $this->usecase->getAll($request->input());
         $data = $data['data']['list'] ?? [];
@@ -27,48 +29,73 @@ class TaskController extends Controller
         ]);
     }
 
-    public function create()
+    public function create() : Response
     {
-        return Inertia::render('Tasks/Create');
-    }
-
-    public function doCreate(Request $request)
-    {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-        ]);
-
-        Task::create($validated);
-
-        return redirect(url('/tasks'))->with([
-            'message' => 'Task berhasil dibuat!',
-            'type' => 'success'
+        return Inertia::render('Tasks/Create', [
+            'csrf_token' => csrf_token(),
         ]);
     }
 
-    public function edit(Task $task)
+    public function doCreate(Request $request) : RedirectResponse
+    {
+        $process = $this->usecase->create(
+            data: $request,
+        );
+
+        if (empty($process['error'])) {
+            return redirect(url('/tasks'))->with([
+                'message' => 'Task berhasil dibuat!',
+                'type' => 'success'
+            ]);
+        } else {
+            return redirect(url('/tasks'))->with([
+                'message' => 'Task gagal dibuat!',
+                'type' => 'error'
+            ]);
+        }
+    }
+
+    public function edit(Task $task) : Response
     {
         return Inertia::render('Tasks/Edit', ['task' => $task]);
     }
 
-    public function doUpdate(Request $request, Task $task)
+    public function doUpdate(Request $request, int $id) : RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'completed' => 'boolean',
-        ]);
+        $process = $this->usecase->update(
+            data: $request,
+            id: $id,
+        );
 
-        $task->update($validated);
-
-        return redirect('tasks');
+        if (empty($process['error'])) {
+            return redirect(url('/tasks'))->with([
+                'message' => 'Task berhasil diperbarui!',
+                'type' => 'success'
+            ]);
+        } else {
+            return redirect(url('/tasks'))->with([
+                'message' => 'Task gagal diperbarui!',
+                'type' => 'error'
+            ]);
+        }
     }
 
-    public function doDelete(Task $task)
+    public function doDelete(int $id) : RedirectResponse
     {
-        $task->delete();
+        $process = $this->usecase->softDelete(
+            id: $id,
+        );
 
-        return redirect('tasks');
+        if (empty($process['error'])) {
+            return redirect(url('/tasks'))->with([
+                'message' => 'Task berhasil dihapus!',
+                'type' => 'success'
+            ]);
+        } else {
+            return redirect(url('/tasks'))->with([
+                'message' => 'Task gagal dihapus!',
+                'type' => 'error'
+            ]);
+        }
     }
 }
