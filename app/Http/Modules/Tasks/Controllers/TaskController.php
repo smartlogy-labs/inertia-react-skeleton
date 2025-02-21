@@ -5,9 +5,12 @@ namespace App\Http\Modules\Tasks\Controllers;
 use App\Entities\ResponseEntity;
 use App\Http\Controllers\Controller;
 use App\Http\Modules\Tasks\Usecases\TaskUsecase;
+use App\Models\Task;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class TaskController extends Controller
 {
@@ -17,7 +20,7 @@ class TaskController extends Controller
         $this->usecase = $usecase;
     }
 
-    public function index(Request $request)
+    public function index(Request $request) : Response
     {
         $data = $this->usecase->getAll($request->input());
         $data = $data['data']['list'] ?? [];
@@ -28,12 +31,14 @@ class TaskController extends Controller
         ]);
     }
 
-    public function create()
+    public function create() : Response
     {
-        return Inertia::render('Tasks/Create');
+        return Inertia::render('Tasks/Create', [
+            'csrf_token' => csrf_token(),
+        ]);
     }
 
-    public function doCreate(Request $request)
+    public function doCreate(Request $request) : RedirectResponse
     {
         $process = $this->usecase->create(data: $request);
 
