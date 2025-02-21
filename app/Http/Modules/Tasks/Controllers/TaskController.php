@@ -38,7 +38,7 @@ class TaskController extends Controller
         $process = $this->usecase->create(data: $request);
 
         if (empty($process['error'])) {
-            return Redirect::route('tasks.index')->with([
+            return Redirect('tasks')->with([
                 'message' => 'Task berhasil dibuat!',
                 'type' => 'success'
             ]);
@@ -69,7 +69,7 @@ class TaskController extends Controller
         );
 
         if (empty($process['error'])) {
-            return Redirect::route('tasks.index')->with([
+            return Redirect('tasks')->with([
                 'message' => ResponseEntity::SUCCESS_MESSAGE_UPDATED,
                 'type' => 'success'
             ]);
@@ -87,7 +87,7 @@ class TaskController extends Controller
         );
 
         if (empty($process['error'])) {
-            return Redirect::route('tasks.index')->with([
+            return Redirect('tasks')->with([
                 'message' => ResponseEntity::SUCCESS_MESSAGE_DELETED,
                 'type' => 'success'
             ]);
