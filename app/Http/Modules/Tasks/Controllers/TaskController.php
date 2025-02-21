@@ -20,7 +20,7 @@ class TaskController extends Controller
         $this->usecase = $usecase;
     }
 
-    public function index(Request $request) : Response
+    public function index(Request $request): Response
     {
         $data = $this->usecase->getAll($request->input());
         $data = $data['data']['list'] ?? [];
@@ -31,19 +31,19 @@ class TaskController extends Controller
         ]);
     }
 
-    public function create() : Response
+    public function create(): Response
     {
         return Inertia::render('Tasks/Create', [
             'csrf_token' => csrf_token(),
         ]);
     }
 
-    public function doCreate(Request $request) : RedirectResponse
+    public function doCreate(Request $request): RedirectResponse
     {
         $process = $this->usecase->create(data: $request);
 
         if (empty($process['error'])) {
-            return Redirect('tasks')->with([
+            return redirect(url('/tasks'))->with([
                 'message' => 'Task berhasil dibuat!',
                 'type' => 'success'
             ]);
@@ -74,8 +74,8 @@ class TaskController extends Controller
         );
 
         if (empty($process['error'])) {
-            return Redirect('tasks')->with([
-                'message' => ResponseEntity::SUCCESS_MESSAGE_UPDATED,
+            return redirect(url('/tasks'))->with([
+                'message' => 'Task berhasil diupdate!',
                 'type' => 'success'
             ]);
         } else {
@@ -92,8 +92,8 @@ class TaskController extends Controller
         );
 
         if (empty($process['error'])) {
-            return Redirect('tasks')->with([
-                'message' => ResponseEntity::SUCCESS_MESSAGE_DELETED,
+            return redirect(url('/tasks'))->with([
+                'message' => 'Task berhasil dihapus!',
                 'type' => 'success'
             ]);
         } else {
