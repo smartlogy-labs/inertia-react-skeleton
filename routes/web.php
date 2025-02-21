@@ -34,8 +34,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [TaskController::class, 'doCreate']);
         Route::get('/{task}', [TaskController::class, 'show']);
         Route::get('/{task}/edit', [TaskController::class, 'edit']);
-        Route::put('/{task}', [TaskController::class, 'doUpdate']);
-        Route::delete('/{task}', [TaskController::class, 'doDelete']);
+        Route::put('/{id}', [TaskController::class, 'doUpdate']);
+        Route::delete('/{id}', [TaskController::class, 'doDelete']);
     });
 });
 

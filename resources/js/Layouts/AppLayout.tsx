@@ -13,6 +13,7 @@ import {
     BreadcrumbSeparator,
 } from "@/Components/ui/breadcrumb";
 import Alert from "@/Components/AlertNotifMessage";
+import { AppSidebarV2 } from "@/Components/Custom/SidebarV2";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
     const user = usePage().props.auth.user;
@@ -23,7 +24,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         >
             <Toaster />
             <Alert />
-            <AppSidebar />
+            {/* <AppSidebar /> */}
+            <AppSidebarV2/>
             <div className="flex-1 overflow-auto">
                 <header className="bg-white w-full z-40 block lg:hidden">
                     <div className="flex justify-between items-center mx-auto py-4 px-4 sm:px-6 lg:px-8">
@@ -36,7 +38,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                     </div>
                 </header>
                 {/* <main className="p-4 mt-20 md:mt-0">{children}</main> */}
-                <main className="p-6 bg-slate-100 rounded-2xl m-2 min-h-screen font-nunito">
+                <main className="lg:p-6 p-3 lg:mt-5 lg:mb-5 lg:me-2 sm:m-0 bg-slate-100 rounded-3xl shadow-md min-h-screen font-nunito">
                     {children}
                 </main>
 

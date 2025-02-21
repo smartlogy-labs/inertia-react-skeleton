@@ -6,10 +6,12 @@ use App\Entities\DatabaseEntity;
 use App\Entities\ResponseEntity;
 use App\Http\Presenter\Response;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Validator;
 
 class TaskUsecase
@@ -28,17 +30,17 @@ class TaskUsecase
         $limit = $filterData['limit'] ?? 10;
 
         $filterStatus = $filterData['status'] ?? "";
-        $filterTitle = $filterData['status'] ?? "";
+        $filterKeywordTitle = $filterData['keywordTitle'] ?? "";
 
         try {
             $query = DB::table('tasks')->whereNull('deleted_at');
-
-            if (!empty($filterTitle)) {
-                $query->where('title', 'like', '%' . $filterTitle . '%');
+            if (!empty($filterKeywordTitle)) {
+                $query = $query->where('title', 'like', '%' . $filterKeywordTitle . '%');
             }
 
             if (!empty($filterStatus)) {
-                $query->where('completed', $filterStatus);
+                $isCompleted = ($filterStatus == "completed") ? 1 : 0;
+                $query = $query->where('completed', $isCompleted);
             }
 
             $query = $query->orderBy('id', "desc");
@@ -120,7 +122,6 @@ class TaskUsecase
             return Response::buildErrorService($e->getMessage());
         }
     }
-
     public function update(Request $data, int $id): array
     {
         $return = [];
@@ -129,7 +130,6 @@ class TaskUsecase
         $validator = Validator::make($data->all(), [
             'title' => 'required',
         ]);
-
         $customAttributes = [
             'title' => 'Judul',
         ];

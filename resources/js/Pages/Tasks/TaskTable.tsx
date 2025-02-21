@@ -38,7 +38,6 @@ export default function TaskTable() {
             <Table className="mb-3">
                 <TableHeader>
                     <TableRow className="fw-bolder">
-                        <TableHead>#</TableHead>
                         <TableHead>Title</TableHead>
                         <TableHead>Description</TableHead>
                         <TableHead>Status</TableHead>
@@ -49,9 +48,6 @@ export default function TaskTable() {
                     {tasks.data.length > 0 ? (
                         tasks.data.map((task, index) => (
                             <TableRow key={task.id}>
-                                <TableCell className="p-6">
-                                    {index + 1}
-                                </TableCell>
                                 <TableCell>{task.title}</TableCell>
                                 <TableCell>
                                     {task.description}
