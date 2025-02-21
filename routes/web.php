@@ -29,7 +29,7 @@ Route::middleware('auth')->group(function () {
 
 
     Route::prefix('tasks')->name('tasks.')->group(function () {
-        Route::get('/', [TaskController::class, 'index']);
+        Route::get('/', [TaskController::class, 'index'])->name('index');
         Route::get('/create', [TaskController::class, 'create']);
         Route::post('/', [TaskController::class, 'doCreate']);
         Route::get('/{task}', [TaskController::class, 'show']);

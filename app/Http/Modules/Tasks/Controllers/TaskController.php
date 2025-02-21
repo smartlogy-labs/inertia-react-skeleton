@@ -2,10 +2,11 @@
 
 namespace App\Http\Modules\Tasks\Controllers;
 
+use App\Entities\ResponseEntity;
 use App\Http\Controllers\Controller;
 use App\Http\Modules\Tasks\Usecases\TaskUsecase;
-use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class TaskController extends Controller
@@ -14,7 +15,7 @@ class TaskController extends Controller
     public function __construct(TaskUsecase $usecase)
     {
         $this->usecase = $usecase;
-    } 
+    }
 
     public function index(Request $request)
     {
@@ -22,7 +23,7 @@ class TaskController extends Controller
         $data = $data['data']['list'] ?? [];
 
         return Inertia::render('Tasks/Index', [
-            'tasks'   => Inertia::defer(fn () => $data),
+            'tasks'   => Inertia::defer(fn() => $data),
             'filters' => $request->input(),
         ]);
     }
@@ -34,41 +35,66 @@ class TaskController extends Controller
 
     public function doCreate(Request $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-        ]);
+        $process = $this->usecase->create(data: $request);
 
-        Task::create($validated);
-
-        return redirect(url('/tasks'))->with([
-            'message' => 'Task berhasil dibuat!',
-            'type' => 'success'
-        ]);
+        if (empty($process['error'])) {
+            return Redirect::route('tasks.index')->with([
+                'message' => 'Task berhasil dibuat!',
+                'type' => 'success'
+            ]);
+        } else {
+            return Redirect::back()->withErrors([
+                'message' => ResponseEntity::DEFAULT_ERROR_MESSAGE
+            ]);
+        }
     }
 
-    public function edit(Task $task)
+    public function edit(int $id)
     {
-        return Inertia::render('Tasks/Edit', ['task' => $task]);
+        $data = $this->usecase->getByID($id);
+        if (empty($data['data'])) {
+            return redirect()
+                ->back()
+                ->with('error', ResponseEntity::DEFAULT_ERROR_MESSAGE);
+        }
+        $data = $data['data'] ?? [];
+        return Inertia::render('Tasks/Edit', ['task' => $data]);
     }
 
-    public function doUpdate(Request $request, Task $task)
+    public function doUpdate(int $id, Request $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'completed' => 'boolean',
-        ]);
+        $process = $this->usecase->update(
+            data: $request,
+            id: $id,
+        );
 
-        $task->update($validated);
-
-        return redirect('tasks');
+        if (empty($process['error'])) {
+            return Redirect::route('tasks.index')->with([
+                'message' => ResponseEntity::SUCCESS_MESSAGE_UPDATED,
+                'type' => 'success'
+            ]);
+        } else {
+            return Redirect::back()->withErrors([
+                'message' => ResponseEntity::DEFAULT_ERROR_MESSAGE
+            ]);
+        }
     }
 
-    public function doDelete(Task $task)
+    public function doDelete(int $id)
     {
-        $task->delete();
+        $process = $this->usecase->delete(
+            id: $id,
+        );
 
-        return redirect('tasks');
+        if (empty($process['error'])) {
+            return Redirect::route('tasks.index')->with([
+                'message' => ResponseEntity::SUCCESS_MESSAGE_DELETED,
+                'type' => 'success'
+            ]);
+        } else {
+            return Redirect::back()->withErrors([
+                'message' => ResponseEntity::DEFAULT_ERROR_MESSAGE
+            ]);
+        }
     }
 }
