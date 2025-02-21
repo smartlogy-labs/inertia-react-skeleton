@@ -6,7 +6,6 @@ use App\Entities\DatabaseEntity;
 use App\Entities\ResponseEntity;
 use App\Http\Presenter\Response;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
