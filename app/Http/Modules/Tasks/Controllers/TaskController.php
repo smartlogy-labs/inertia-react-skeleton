@@ -2,11 +2,13 @@
 
 namespace App\Http\Modules\Tasks\Controllers;
 
+use App\Entities\ResponseEntity;
 use App\Http\Controllers\Controller;
 use App\Http\Modules\Tasks\Usecases\TaskUsecase;
 use App\Models\Task;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -16,31 +18,29 @@ class TaskController extends Controller
     public function __construct(TaskUsecase $usecase)
     {
         $this->usecase = $usecase;
-    } 
+    }
 
-    public function index(Request $request) : Response
+    public function index(Request $request): Response
     {
         $data = $this->usecase->getAll($request->input());
         $data = $data['data']['list'] ?? [];
 
         return Inertia::render('Tasks/Index', [
-            'tasks'   => Inertia::defer(fn () => $data),
+            'tasks'   => Inertia::defer(fn() => $data),
             'filters' => $request->input(),
         ]);
     }
 
-    public function create() : Response
+    public function create(): Response
     {
         return Inertia::render('Tasks/Create', [
             'csrf_token' => csrf_token(),
         ]);
     }
 
-    public function doCreate(Request $request) : RedirectResponse
+    public function doCreate(Request $request): RedirectResponse
     {
-        $process = $this->usecase->create(
-            data: $request,
-        );
+        $process = $this->usecase->create(data: $request);
 
         if (empty($process['error'])) {
             return redirect(url('/tasks'))->with([
@@ -48,19 +48,25 @@ class TaskController extends Controller
                 'type' => 'success'
             ]);
         } else {
-            return redirect(url('/tasks'))->with([
-                'message' => 'Task gagal dibuat!',
-                'type' => 'error'
+            return Redirect::back()->withErrors([
+                'message' => ResponseEntity::DEFAULT_ERROR_MESSAGE
             ]);
         }
     }
 
-    public function edit(Task $task) : Response
+    public function edit(int $id)
     {
-        return Inertia::render('Tasks/Edit', ['task' => $task]);
+        $data = $this->usecase->getByID($id);
+        if (empty($data['data'])) {
+            return redirect()
+                ->back()
+                ->with('error', ResponseEntity::DEFAULT_ERROR_MESSAGE);
+        }
+        $data = $data['data'] ?? [];
+        return Inertia::render('Tasks/Edit', ['task' => $data]);
     }
 
-    public function doUpdate(Request $request, int $id) : RedirectResponse
+    public function doUpdate(int $id, Request $request)
     {
         $process = $this->usecase->update(
             data: $request,
@@ -69,20 +75,19 @@ class TaskController extends Controller
 
         if (empty($process['error'])) {
             return redirect(url('/tasks'))->with([
-                'message' => 'Task berhasil diperbarui!',
+                'message' => 'Task berhasil diupdate!',
                 'type' => 'success'
             ]);
         } else {
-            return redirect(url('/tasks'))->with([
-                'message' => 'Task gagal diperbarui!',
-                'type' => 'error'
+            return Redirect::back()->withErrors([
+                'message' => ResponseEntity::DEFAULT_ERROR_MESSAGE
             ]);
         }
     }
 
-    public function doDelete(int $id) : RedirectResponse
+    public function doDelete(int $id)
     {
-        $process = $this->usecase->softDelete(
+        $process = $this->usecase->delete(
             id: $id,
         );
 
@@ -92,9 +97,8 @@ class TaskController extends Controller
                 'type' => 'success'
             ]);
         } else {
-            return redirect(url('/tasks'))->with([
-                'message' => 'Task gagal dihapus!',
-                'type' => 'error'
+            return Redirect::back()->withErrors([
+                'message' => ResponseEntity::DEFAULT_ERROR_MESSAGE
             ]);
         }
     }

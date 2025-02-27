@@ -2,13 +2,15 @@
 
 namespace App\Http\Modules\Tasks\Usecases;
 
+use App\Entities\DatabaseEntity;
 use App\Entities\ResponseEntity;
 use App\Http\Presenter\Response;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Validator;
 
 class TaskUsecase
@@ -30,9 +32,7 @@ class TaskUsecase
         $filterKeywordTitle = $filterData['keywordTitle'] ?? "";
 
         try {
-            $query = DB::table('tasks')
-                ->whereNull('deleted_at');
-
+            $query = DB::table('tasks')->whereNull('deleted_at');
             if (!empty($filterKeywordTitle)) {
                 $query = $query->where('title', 'like', '%' . $filterKeywordTitle . '%');
             }
@@ -54,7 +54,31 @@ class TaskUsecase
             ]);
         } catch (Exception $e) {
             Log::error($e->getMessage(), ["func_name" => $funcName, 'user' => Auth::user()]);
-            
+
+            return Response::buildErrorService($e->getMessage());
+        }
+    }
+
+    public function getByID(int $id): array
+    {
+        $funcName = $this->className . ".getByID";
+
+        try {
+            $data = DB::table(DatabaseEntity::TASK, "t")
+                ->leftJoin("task_categories as tc", "tc.id", "=", "t.category_id")
+                ->whereNull("t.deleted_at")
+                ->where('t.id', $id)
+                ->first(['t.*', 'tc.name as category']);
+
+            return Response::buildSuccess(
+                data: collect($data)->toArray()
+            );
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), [
+                "func_name" => $funcName,
+                'user' => Auth::user()
+            ]);
+
             return Response::buildErrorService($e->getMessage());
         }
     }
@@ -66,21 +90,22 @@ class TaskUsecase
         $validator = Validator::make($data->all(), [
             'title' => 'required',
         ]);
+
         $customAttributes = [
-            'title' => 'Judul Tugas',
+            'title' => 'Judul',
         ];
         $validator->setAttributeNames($customAttributes);
         $validator->validate();
 
         DB::beginTransaction();
         try {
-            DB::table("tasks")
+            $taskID = DB::table(DatabaseEntity::TASK)
                 ->insertGetId([
-                    'title'         => $data['title'],
-                    'description'   => $data['description'],
-                    'completed'     => 0,
-                    // 'created_by'    => Auth::user()->id,
-                    'created_at'    => datetime_now()
+                    'title'                 => $data['title'],
+                    'category_id'           => $data['category_id'],
+                    'description'           => $data['description'],
+                    'created_by'            => Auth::user()->id,
+                    'created_at'            => now()
                 ]);
 
             DB::commit();
@@ -105,23 +130,23 @@ class TaskUsecase
             'title' => 'required',
         ]);
         $customAttributes = [
-            'title' => 'Judul Tugas',
+            'title' => 'Judul',
         ];
         $validator->setAttributeNames($customAttributes);
         $validator->validate();
 
         $update = [
-            'title'         => $data['title'],
-            'description'   => $data['description'],
-            'completed'     => $data['completed'],
-            // 'updated_by' => Auth::user()->id,
-            'updated_at'    => datetime_now()
+            'title'                 => $data['title'],
+            'category_id'           => $data['category_id'],
+            'description'           => $data['description'],
+            'updated_by'            => Auth::user()->id,
+            'updated_at'            => now()
         ];
 
         DB::beginTransaction();
 
         try {
-            DB::table("tasks")
+            DB::table(DatabaseEntity::TASK)
                 ->where("id", $id)
                 ->update($update);
 
@@ -142,7 +167,7 @@ class TaskUsecase
         return $return;
     }
 
-    public function softDelete(int $id): array
+    public function delete(int $id): array
     {
         $return = [];
         $funcName = $this->className . ".delete";
@@ -150,11 +175,11 @@ class TaskUsecase
         DB::beginTransaction();
 
         try {
-            $delete = DB::table("tasks")
+            $delete = DB::table(DatabaseEntity::TASK)
                 ->where('id', $id)
                 ->update([
-                    // 'deleted_by' => Auth::user()->id,
-                    'deleted_at' => datetime_now(),
+                    'deleted_by' => Auth::user()->id,
+                    'deleted_at' => now(),
                 ]);
 
             if (!$delete) {
